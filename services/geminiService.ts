@@ -7,7 +7,7 @@ if (!process.env.API_KEY) {
   console.error("API_KEY environment variable not set.");
 }
 
-const ai = new GoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAIGoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 interface EnhanceOptions {
   style?: ArtStyle;
