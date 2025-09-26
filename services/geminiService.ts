@@ -44,11 +44,15 @@ export const enhancePrompt = async (
       },
     });
 
-    const text = response.text;
-    if (!text) {
-      throw new Error("Received an empty response from the AI.");
-    }
-    return text.trim();
+    
+const result = await model.generateContent(modelInput);
+const response = result.response;
+const text = response.text();
+
+if (!text) {
+  throw new Error("Received an empty response from the AI.");
+}
+return text.trim();
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     throw new Error("Failed to generate prompt. Please check your API key and try again.");
