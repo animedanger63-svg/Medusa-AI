@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ToolOption, ArtStyle, WebsiteCategory } from '../types';
 import { PROMPT_SYSTEM_INSTRUCTIONS } from '../constants';
 
