@@ -1,4 +1,3 @@
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ToolOption, ArtStyle, WebsiteCategory } from '../types';
 import { PROMPT_SYSTEM_INSTRUCTIONS } from '../constants';
@@ -33,16 +32,19 @@ export const enhancePrompt = async (
     }
   }
 
-try {
-  const result = await model.generateContent(modelInput);
-  const response = result.response;
-  const text = response.text();
+  try {
+    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent([systemInstruction, modelInput]);
+    const response = result.response;
+    const text = response.text();
 
-  if (!text) {
-    throw new Error("Received an empty response from the AI.");
+    if (!text) {
+      throw new Error("Received an empty response from the AI.");
+    }
+    return text.trim();
+    
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    throw new Error("Failed to generate prompt. Please check your API key and try again.");
   }
-  return text.trim();
-} catch (error) {
-  console.error("Error calling Gemini API:", error);
-  throw new Error("Failed to generate prompt. Please check your API key and try again.");
-}
+};
