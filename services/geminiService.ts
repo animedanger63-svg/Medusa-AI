@@ -38,26 +38,25 @@ export const enhancePrompt = async (
   // Combine the system instruction and user input for the final prompt
   const finalPrompt = `${systemInstruction}\n\n${userInput}`;
 
-  try {
-    // Call the Cohere API's generate endpoint
-    const response = await cohere.generate({
-      model: "command-r", // <-- This line was missing
-      prompt: finalPrompt,
-      max_tokens: 250,
-      temperature: 0.7,
-    });
+try {
+  // Call the Cohere API's generate endpoint
+  const response = await cohere.generate({
+    model: "command-light", // <-- Add this line
+    prompt: finalPrompt,
+    max_tokens: 250,
+    temperature: 0.7,
+  });
 
-    // Get the generated text from Cohere's response object
-    const text = response.generations[0].text;
+  // Get the generated text from Cohere's response object
+  const text = response.generations[0].text;
 
-    if (!text) {
-      throw new Error("Received an empty response from the AI.");
-    }
-    return text.trim();
-    
-  } catch (error) {
-    // Updated error message for Cohere
-    console.error("Error calling Cohere API:", error);
-    throw new Error("Failed to generate prompt. Please check your API key and try again.");
+  if (!text) {
+    throw new Error("Received an empty response from the AI.");
   }
-};
+  return text.trim();
+  
+} catch (error) {
+  // Updated error message for Cohere
+  console.error("Error calling Cohere API:", error);
+  throw new Error("Failed to generate prompt. Please check your API key and try again.");
+}
