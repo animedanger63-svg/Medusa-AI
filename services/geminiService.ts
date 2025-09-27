@@ -41,9 +41,10 @@ export const enhancePrompt = async (
   try {
     // Call the Cohere API's generate endpoint
     const response = await cohere.generate({
+      model: "command-r", // <-- This line was missing
       prompt: finalPrompt,
-      max_tokens: 250, // You can adjust the length of the response
-      temperature: 0.7, // You can adjust the creativity
+      max_tokens: 250,
+      temperature: 0.7,
     });
 
     // Get the generated text from Cohere's response object
