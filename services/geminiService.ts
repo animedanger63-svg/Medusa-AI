@@ -1,9 +1,12 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// Import the CohereClient instead of GoogleGenerativeAI
+import { CohereClient } from "cohere-ai";
 import { ToolOption, ArtStyle, WebsiteCategory } from '../types';
 import { PROMPT_SYSTEM_INSTRUCTIONS } from '../constants';
 
-
-const ai = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+// Initialize the Cohere client with your Cohere API key
+const cohere = new CohereClient({
+  token: import.meta.env.VITE_COHERE_API_KEY,
+});
 
 interface EnhanceOptions {
   style?: ArtStyle;
@@ -20,23 +23,31 @@ export const enhancePrompt = async (
     throw new Error("Prompt idea cannot be empty.");
   }
 
-  // Construct a more detailed input for the model
-  let modelInput = `User idea: "${idea}"`;
+  // Your original logic for building the prompt based on user input
+  let userInput = `User idea: "${idea}"`;
   if (tool === ToolOption.Image || tool === ToolOption.Video) {
     if (options.style && options.style !== 'none') {
-      modelInput += `\nStyle to apply: "${options.style}"`;
+      userInput += `\nStyle to apply: "${options.style}"`;
     }
   } else if (tool === ToolOption.Website) {
     if (options.category && options.category !== 'none') {
-      modelInput += `\nWebsite Category: "${options.category}"`;
+      userInput += `\nWebsite Category: "${options.category}"`;
     }
   }
 
+  // Combine the system instruction and user input for the final prompt
+  const finalPrompt = `${systemInstruction}\n\n${userInput}`;
+
   try {
-    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent([systemInstruction, modelInput]);
-    const response = result.response;
-    const text = response.text();
+    // Call the Cohere API's generate endpoint
+    const response = await cohere.generate({
+      prompt: finalPrompt,
+      max_tokens: 250, // You can adjust the length of the response
+      temperature: 0.7, // You can adjust the creativity
+    });
+
+    // Get the generated text from Cohere's response object
+    const text = response.generations[0].text;
 
     if (!text) {
       throw new Error("Received an empty response from the AI.");
@@ -44,7 +55,8 @@ export const enhancePrompt = async (
     return text.trim();
     
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
+    // Updated error message for Cohere
+    console.error("Error calling Cohere API:", error);
     throw new Error("Failed to generate prompt. Please check your API key and try again.");
   }
 };
